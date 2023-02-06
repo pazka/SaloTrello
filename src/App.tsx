@@ -1,34 +1,33 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import * as THREE from 'three'
+import { createRoot } from 'react-dom/client'
+import React, { useRef, useState } from 'react'
+import { Canvas, useFrame, ThreeElements } from '@react-three/fiber'
 
-function App() {
-  const [count, setCount] = useState(0)
-
+function Box(props: ThreeElements['mesh']) {
+  const mesh = useRef<THREE.Mesh>(null!)
+  const [hovered, setHover] = useState(false)
+  const [active, setActive] = useState(false)
+  useFrame((state, delta) => (mesh.current.rotation.x += delta))
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <mesh
+      {...props}
+      ref={mesh}
+      scale={active ? 1.5 : 1}
+      onClick={(event) => setActive(!active)}
+      onPointerOver={(event) => setHover(true)}
+      onPointerOut={(event) => setHover(false)}>
+      <boxGeometry args={[1, 1, 1]} />
+      <meshStandardMaterial color={hovered ? 'hotpink' : 'orange'} />
+    </mesh>
   )
 }
 
-export default App
+//@ts-ignore
+export default createRoot(document.getElementById('root')).render(
+  <Canvas>
+    <ambientLight />
+    <pointLight position={[10, 10, 10]} />
+    <Box position={[-1.2, 0, 0]} />
+    <Box position={[1.2, 0, 0]} />
+  </Canvas>,
+)
