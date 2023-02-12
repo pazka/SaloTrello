@@ -1,13 +1,94 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Salome's Academic Aerie</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
-  </body>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>My first three.js app</title>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script src="https://threejs.org/build/three.js"></script>
+    <script>
+        const controls = {}
+        //scene setting
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(150, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        //geometry setting
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+
+        camera.position.z = 5;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            renderer.render(scene, camera);
+				cube.rotation.x += 0.01;
+				cube.rotation.y += 0.01;
+        }
+        animate();
+
+        window.addEventListener('contextmenu', (event) => {
+            event.preventDefault();
+        })
+
+
+        window.addEventListener('mousedown', (event) => {
+            if (event.button == 0) {
+                controls.left = true;
+            }
+            if (event.button == 1) {
+                controls.middle = true;
+            }
+            if (event.button == 2) {
+                controls.right = true;
+            }
+            event.preventDefault();
+        });
+        window.addEventListener('mouseup', (event) => {
+            if (event.button == 0) {
+                controls.left = false;
+            }
+            if (event.button == 1) {
+                controls.middle = false;
+            }
+            if (event.button == 2) {
+                controls.right = false;
+            }
+            event.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (event) => {
+            if (controls.left) {
+                camera.position.x += event.movementX / 500;
+                camera.position.y -= event.movementY / 500;
+            }
+            if (controls.middle) {
+                camera.position.z += event.movementY / 500;
+            }
+            if (controls.right) {
+                camera.rotation.x += event.movementY / 500;
+                camera.rotation.y += event.movementX / 500;
+            }
+            event.preventDefault();
+        });
+
+        window.addEventListener('wheel', (event) => {
+            camera.position.z += event.deltaY / 500;
+            event.preventDefault();
+        });
+    </script>
+</body>
+
 </html>
